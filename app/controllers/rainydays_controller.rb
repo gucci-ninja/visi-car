@@ -29,8 +29,8 @@ class RainydaysController < ApplicationController
             annotation = vision.annotate(image, labels: true, text: true)
             puts annotation
 
-          end
-
+        end
+        redirect_to root_path
     end
 
     def style_extractor
