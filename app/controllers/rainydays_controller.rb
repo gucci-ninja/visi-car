@@ -4,6 +4,7 @@ require 'open-uri'
 # SOAP library
 require 'savon'
 # REST library
+require 'httparty'
 # require 'net/http'
 # require 'uri'
 # require 'json'
@@ -14,6 +15,7 @@ class RainydaysController < ApplicationController
     # This is our index page :)
     def index
         @latlong = [37.3333945,-121.8806499]
+        best_deals
     end
 
     def cloud_vision
@@ -54,7 +56,7 @@ class RainydaysController < ApplicationController
             labels.each do |label|
                 puts label.description
                 # find the right label
-                auto_strings[0] = label.match(/\d{4}/)
+                auto_strings[0] = label.match(/\d{4}/)  
                 label = label.gsub(auto_strings[0])
 
                 auto_strings[1] = cars.select{ |str| label.include?(str)}
@@ -69,45 +71,52 @@ class RainydaysController < ApplicationController
     end
 
     def style_extractor
-        input_string = ""
+        input_string = ["2016","Tesla","Model S"]
 
-        client = Savon::Client.new do
-            wsdl.document = "http://services.chromedata.com/Description/7b?wsdl"
-        end
+        client = Savon.client(:wsdl => "http://services.chromedata.com/Description/7b?wsdl", :log => false)
 
-        response = client.request :urn, "VehicleDescriptionRequest" do
-            soap.body = {
-                ":urn:accountInfo" => nil, :attributes! => {
-                    :number => ENV['SOAP_NUMBER'],
-                    :secret => ENV['SOAP_SECRET'],
-                    :country => "CA",
-                    :language => "en"
+        response = client.call(
+            :describe_vehicle,
+            message: {
+                :account_info =>{
+                    :@secret => ENV['AUTO_SECRET'],
+                    :@number => ENV['AUTO_USER'],
+                    :@country => "CA",
+                    :@language => "en"
                 },
-                "urn:modelYear" => input_string[0],
-                "urn:makeName" => input_string[1],
-                "urn:modelName" => input_string[2]
+                :model_year => input_string[0],
+                :make_name => input_string[1],
+                :model_name => input_string[2],
+                # :vin => "?",
             }
-        end
-
+        ).to_hash
+        
+        puts response[:vehicle_description][:style][0][:acode]
+        return response[:vehicle_description][:style][0][:acode]
+        
     end
 
     def here_maps(location)
-
     end
 
-    # def best_deals
-    #     location=""
-    #     car_id=""
+    def best_deals
+        # location, car id
+        raw_url="https://incentives.chromedata.com/BestOffer/offer/latest/%s/%s/offers.json" % ["L6K3S3", style_extractor]
+        puts raw_url
 
-    #     uri = URI.parse("https://incentives.chromedata.com/BestOffer/offer/latest/")
-    #     http = Net::HTTP.new(uri.host, uri.port)
+        auth = { 
+            :username  => "317789",
+            :password => 'd4297c7dc3d94bf3' 
+        }
+        
+        base_uri = URI.parse(raw_url)
+        puts base_uri
 
-
-    # end
-
-    # def background
-    # end
-
-    # def resources
-    # end
+        request = HTTParty.get(
+            base_uri.to_s,
+            :basic_auth => auth
+        )
+        # do something with it
+        puts request.parsed_response
+    end
 end
