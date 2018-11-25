@@ -1,7 +1,13 @@
 # Imports the Google Cloud client library
 require "google/cloud/vision"
 require 'open-uri'
+# SOAP library
 require 'savon'
+# REST library
+# require 'net/http'
+# require 'uri'
+# require 'json'
+
 
 class RainydaysController < ApplicationController
 
@@ -35,7 +41,6 @@ class RainydaysController < ApplicationController
 
     def style_extractor
         input_string = ""
-        puts 
 
         client = Savon::Client.new do
             wsdl.document = "http://services.chromedata.com/Description/7b?wsdl"
@@ -57,4 +62,13 @@ class RainydaysController < ApplicationController
 
     end
 
+    # def best_deals
+    #     location=""
+    #     car_id=""
+
+    #     uri = URI.parse("https://incentives.chromedata.com/BestOffer/offer/latest/")
+    #     http = Net::HTTP.new(uri.host, uri.port)
+
+
+    # end
 end

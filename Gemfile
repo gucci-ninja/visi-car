@@ -44,8 +44,11 @@ gem 'jquery-rails'
 # Google Cloud
 gem 'google-cloud-vision'
 
-# Savon
+# Savon: SOUP library
 gem 'savon'
+
+# httpParty
+gem 'httparty'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
