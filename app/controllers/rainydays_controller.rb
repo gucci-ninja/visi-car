@@ -11,12 +11,12 @@ require 'httparty'
 
 
 class RainydaysController < ApplicationController
-    @latlong = [37.3333945,-121.8806499]
+    @latlong = [43.0071067,-81.2849162]
     @url_image = "http://www.evolvefish.com/thumbnail.asp?file=assets/images/vinyl%20decals/EF-VDC-00035(black).jpg&maxx=300&maxy=0"
     # This is our index page :)
     def index
         @url_image = "http://www.evolvefish.com/thumbnail.asp?file=assets/images/vinyl%20decals/EF-VDC-00035(black).jpg&maxx=300&maxy=0"
-        @latlong = [37.3333945,-121.8806499]
+        @latlong = [43.0071067,-81.2849162]
         @vins = Vin.all
     end
 
@@ -88,17 +88,18 @@ class RainydaysController < ApplicationController
             puts "auto string ================================"
             puts auto_strings
             puts "auto string ================================"
-            @car = auto_strings.join(" ").upcase
+            @car = auto_strings[1..-1].join(" ").upcase
             @big_jsons = best_deals(style_extractor(auto_strings))
             #here_maps(@location)
 
         end
-        @latlong = [37.3333945,-121.8806499]
+        @latlong = [43.0071067,-81.2849162]
         @vin = Vin.new
         @vin.brand = auto_strings[1]
         @vin.model = auto_strings[2]
         @vin.save
         @url_image = img_url
+        @vins = Vin.all
         render :index
     end
 
@@ -122,9 +123,13 @@ class RainydaysController < ApplicationController
                 # :vin => "?",
             }
         ).to_hash
-        
-        puts response[:vehicle_description][:style][0][:acode]
-        return response[:vehicle_description][:style][0][:acode]
+        begin
+            puts response[:vehicle_description][:style][0][:acode]
+            return response[:vehicle_description][:style][0][:acode]
+        rescue => exception
+            return
+        end
+
         
     end
 
@@ -132,6 +137,9 @@ class RainydaysController < ApplicationController
     end
 
     def best_deals(style_extract)
+        if !style_extract
+            return
+        end
         # location, car id
         raw_url="https://incentives.chromedata.com/BestOffer/offer/latest/%s/%s/offers.json" % ["L6K3S3", style_extract]
         puts raw_url

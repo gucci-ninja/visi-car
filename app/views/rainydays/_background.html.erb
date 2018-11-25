@@ -1,14 +1,8 @@
 <div class="block">
     <h2>Visualizer</h2>
-    <% @vins.each do |v| %>
-        <tr>
-            <td width="200px"><%= v.model%> </td>
-            <td width="200px"><%= v.brand %></td>
-        </tr>
-    <% end%>
 
     <%= pie_chart Vin.group(:brand).count %>
-    <%= line_chart Vin.group(:model).count %>
+    <%= bar_chart Vin.group(:model).count %>
 
 
 </div>
