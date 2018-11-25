@@ -1,1 +1,6 @@
 <h1>Joseph is a poo-poo</h1>
+<%= image_tag 'car.png', class: "img-fluid" %>
+<%= form_tag(action: :cloud_vision, method: "get") do %>
+    <%= text_field_tag(:img_url) %>
+    <%= submit_tag("Search") %>
+<% end %>
