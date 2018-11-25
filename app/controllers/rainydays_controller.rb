@@ -7,11 +7,24 @@ class RainydaysController < ApplicationController
 
     # This is our index page :)
     def index
+        @latlong = [37.3333945,-121.8806499]
     end
 
     def cloud_vision
         img_url = params[:img_url]
         puts img_url
+
+        cars = ["Ford",
+            "Toyota",
+            "Honda",
+            "Chevrolet",
+            "Nissan",
+            "Hyundai",
+            "Ram",
+            "GMC",
+            "Kia",
+            "Dodge"]
+
         # Your Google Cloud Platform project ID
         project_id = ENV['PROJECT_ID']
 
@@ -23,6 +36,7 @@ class RainydaysController < ApplicationController
         open(img_url) do |img|
 
             image = vision.image(img)
+            auto_strings = Array.new # year, brand, model
             # puts image.text
 
             # annotation = vision.annotate(image, labels: true, text: true)
@@ -33,7 +47,17 @@ class RainydaysController < ApplicationController
             puts "Labels:"
             labels.each do |label|
                 puts label.description
+                # find the right label
+                auto_strings[0] = label.match(/\d{4}/)
+                label = label.gsub(auto_strings[0])
+
+                auto_strings[1] = cars.select{ |str| label.include?(str)}
+                label = label.gsub(auto_strings[1])
+
+                auto_strings[2] = label.strip
             end
+            @location = best_deals(style_extractor(auto_strings))
+            here_maps(@location)
         end
         redirect_to root_path
     end
@@ -59,6 +83,11 @@ class RainydaysController < ApplicationController
                 "urn:modelName" => input_string[2]
             }
         end
+
+    end
+
+    def here_maps(location)
+       
 
     end
 
