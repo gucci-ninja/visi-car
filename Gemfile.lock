@@ -103,6 +103,7 @@ GEM
     ffi (1.9.25-x86-mingw32)
     globalid (0.4.1)
       activesupport (>= 4.2.0)
+    gmaps4rails (2.1.2)
     google-cloud-core (1.2.7)
       google-cloud-env (~> 1.0)
     google-cloud-env (1.0.5)
@@ -312,6 +313,7 @@ DEPENDENCIES
   chromedriver-helper
   coffee-rails (~> 4.2)
   dotenv-rails
+  gmaps4rails
   google-cloud-vision
   httparty
   jbuilder (~> 2.5)

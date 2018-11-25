@@ -47,6 +47,8 @@ gem 'google-cloud-vision'
 # Savon: SOUP library
 gem 'savon'
 
+# Google maps
+gem 'gmaps4rails'
 # httpParty
 gem 'httparty'
 
