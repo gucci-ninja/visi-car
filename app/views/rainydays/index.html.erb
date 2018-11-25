@@ -1,12 +1,27 @@
-<h1>Joseph is a poo-poo</h1>
-<%= image_tag 'car.png', class: "img-fluid" %>
-<%= form_tag(:cloud_vision, method: "get") do %>
-    <%= text_field_tag(:img_url) %>
-    <%= submit_tag("Search") %>
-<% end %>
-<div style='width: 800px;'>  
-  <div id="map" style='width: 800px; height: 400px;'></div>  
-</div> 
+
+
+<div class="block">
+    <h2>Enter a URL for a car you're thinking of buying</h2>
+    <br>
+    <form class="form-inline">
+        <%= form_tag(:cloud_vision, method: "get") do %>
+            <%= text_field_tag(:img_url) %>
+            <%= submit_tag("Search", type: 'button', class: "btn btn-outline-success my-2 my-sm-0") %>
+        <% end %>
+    </form>
+    <div style='width: 800px;'>  
+    <div id="map" style='width: 800px; height: 400px;'></div>  
+    </div> 
+</div>
+
+<div id="background">
+    <%= render "background"%>
+</div>
+
+<div id="resources">
+    <%= render "resources" %>
+</div>
+
 
 <script type="text/javascript">  
 handler = Gmaps.build('Google');  

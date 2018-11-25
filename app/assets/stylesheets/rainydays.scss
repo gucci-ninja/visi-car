@@ -1,3 +1,18 @@
 // Place all the styles related to the rainydays controller here.
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
+
+.block {
+    margin: auto;
+    width: 50%;
+    padding: 10px;
+}
+
+#map {
+    width: 50%;
+    height: auto;
+}
+
+#form {
+    display: inline-block;
+}

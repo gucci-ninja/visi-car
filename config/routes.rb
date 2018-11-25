@@ -3,4 +3,7 @@ Rails.application.routes.draw do
   root 'rainydays#index'
   get 'rainydays/cloud_vision'
   get '/cloud_vision', to: 'rainydays#cloud_vision', as: 'cloud_vision'
+
+  # get 'rainydays/background' => "rainydays#background"
+  # get 'rainydays/resources' => "rainydays#resources"
 end

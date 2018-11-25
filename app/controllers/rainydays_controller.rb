@@ -104,4 +104,10 @@ class RainydaysController < ApplicationController
 
 
     # end
+
+    # def background
+    # end
+
+    # def resources
+    # end
 end
