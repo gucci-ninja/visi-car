@@ -20,3 +20,6 @@
 //= require bootstrap
 //= require_tree .
 //= require gmaps/google
+
+//= require Chart.bundle
+//= require chartkick

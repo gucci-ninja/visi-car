@@ -3,12 +3,17 @@
 <div class="block">
     <h2>Enter a URL for a car you're thinking of buying</h2>
     <br>
-    <form class="form-inline">
-        <%= form_tag(:cloud_vision, method: "get") do %>
-            <%= text_field_tag(:img_url) %>
-            <%= submit_tag("Search", type: 'button', class: "btn btn-outline-success my-2 my-sm-0") %>
-        <% end %>
-    </form>
+    <%= form_tag(:cloud_vision, method: "get") do %>
+        <%= text_field_tag(:img_url) %>
+        <%= submit_tag("Search") %>
+    <% end %>
+    <p>
+        <%= "Detected: #{@car}" %>
+    </p>
+
+    <%= image_tag(@url_image, size: "48") %>
+
+    <h3>We'll try our best to show you the best deals :)</h3>
     <div style='width: 800px;'>  
     <div id="map" style='width: 800px; height: 400px;'></div>  
     </div> 
@@ -28,8 +33,8 @@ handler = Gmaps.build('Google');
 handler.buildMap({ provider: {}, internal: {id: 'map'}}, function(){  
   markers = handler.addMarkers([  
     {  
-      "lat": "<%=@latlong[0]%>",  
-      "lng": "<%=@latlong[1]%>",  
+      "lat": "<%= @latlong[0] %>",  
+      "lng": "<%= @latlong[1] %>",  
       "picture": {  
         "width":  32,  
         "height": 32  

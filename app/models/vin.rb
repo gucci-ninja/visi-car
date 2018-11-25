@@ -1,0 +1,4 @@
+class Vin < ApplicationRecord
+
+    
+end

@@ -11,14 +11,17 @@ require 'httparty'
 
 
 class RainydaysController < ApplicationController
-
+    @latlong = [37.3333945,-121.8806499]
+    @url_image = "http://www.evolvefish.com/thumbnail.asp?file=assets/images/vinyl%20decals/EF-VDC-00035(black).jpg&maxx=300&maxy=0"
     # This is our index page :)
     def index
+        @url_image = "http://www.evolvefish.com/thumbnail.asp?file=assets/images/vinyl%20decals/EF-VDC-00035(black).jpg&maxx=300&maxy=0"
         @latlong = [37.3333945,-121.8806499]
-        best_deals
+        @vins = Vin.all
     end
 
     def cloud_vision
+        #@url_image = "http://www.evolvefish.com/thumbnail.asp?file=assets/images/vinyl%20decals/EF-VDC-00035(black).jpg&maxx=300&maxy=0"
         img_url = params[:img_url]
         puts img_url
 
@@ -40,11 +43,11 @@ class RainydaysController < ApplicationController
         vision = Google::Cloud::Vision.new project: project_id
 
         #image  = vision.image "./images/car.jpg"
-
+        auto_strings = Array.new # year, brand, mode
         open(img_url) do |img|
 
             image = vision.image(img)
-            auto_strings = Array.new # year, brand, model
+            
             # puts image.text
 
             # annotation = vision.annotate(image, labels: true, text: true)
@@ -54,24 +57,53 @@ class RainydaysController < ApplicationController
 
             puts "Labels:"
             labels.each do |label|
-                puts label.description
+                #puts label.description
+                lbl = label.description
                 # find the right label
-                auto_strings[0] = label.match(/\d{4}/)  
-                label = label.gsub(auto_strings[0])
+                #puts "chcking if label incldes brands in cars"
+                cars.each do |car|
+                    if lbl.upcase.include?(car.upcase)
+                        puts "hey we found a toota"
+                        auto_strings[1] = car
+                        if lbl.split(" ").length > 1
+                            lbl = lbl.downcase.gsub(car.downcase, "")
+                            auto_strings[0] = lbl.match(/\d{4}/)
+                            if auto_strings[0] == nil
+                                auto_strings[0] = "2016"
+                            end
+                            lbl = lbl.gsub(auto_strings[0], "")
+                            auto_strings[2] = lbl.strip
+                        else
+                            next
+                        end
+                    end
+                end
 
-                auto_strings[1] = cars.select{ |str| label.include?(str)}
-                label = label.gsub(auto_strings[1])
-
-                auto_strings[2] = label.strip
+                #puts brand
+                if cars.select{ |str| lbl.include?(str)}
+                   # puts "found 1"
+                end
             end
-            @location = best_deals(style_extractor(auto_strings))
-            here_maps(@location)
+
+            puts "auto string ================================"
+            puts auto_strings
+            puts "auto string ================================"
+            @car = auto_strings.join(" ").upcase
+            @big_jsons = best_deals(style_extractor(auto_strings))
+            #here_maps(@location)
+
         end
-        redirect_to root_path
+        @latlong = [37.3333945,-121.8806499]
+        @vin = Vin.new
+        @vin.brand = auto_strings[1]
+        @vin.model = auto_strings[2]
+        @vin.save
+        @url_image = img_url
+        render :index
     end
 
-    def style_extractor
-        input_string = ["2016","Tesla","Model S"]
+    def style_extractor(input_string)
+        #input_string = ["2016","Tesla","Model S"]
 
         client = Savon.client(:wsdl => "http://services.chromedata.com/Description/7b?wsdl", :log => false)
 
@@ -99,9 +131,9 @@ class RainydaysController < ApplicationController
     def here_maps(location)
     end
 
-    def best_deals
+    def best_deals(style_extract)
         # location, car id
-        raw_url="https://incentives.chromedata.com/BestOffer/offer/latest/%s/%s/offers.json" % ["L6K3S3", style_extractor]
+        raw_url="https://incentives.chromedata.com/BestOffer/offer/latest/%s/%s/offers.json" % ["L6K3S3", style_extract]
         puts raw_url
 
         auth = { 
@@ -118,5 +150,6 @@ class RainydaysController < ApplicationController
         )
         # do something with it
         puts request.parsed_response
+        
     end
 end
