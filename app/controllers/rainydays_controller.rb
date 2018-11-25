@@ -7,7 +7,6 @@ class RainydaysController < ApplicationController
 
     # This is our index page :)
     def index
-
     end
 
     def cloud_vision
@@ -24,11 +23,17 @@ class RainydaysController < ApplicationController
         open(img_url) do |img|
 
             image = vision.image(img)
-            puts image.text
+            # puts image.text
 
-            annotation = vision.annotate(image, labels: true, text: true)
-            puts annotation
+            # annotation = vision.annotate(image, labels: true, text: true)
+            # puts annotation
+            # Performs label detection on the image file
+            labels = vision.image(image).labels
 
+            puts "Labels:"
+            labels.each do |label|
+                puts label.description
+            end
         end
         redirect_to root_path
     end
@@ -48,9 +53,9 @@ class RainydaysController < ApplicationController
                     :secret => ENV['SOAP_SECRET'],
                     :country => "CA",
                     :language => "en"
-                }
-                "urn:modelYear" => input_string[0]
-                "urn:makeName" => input_string[1]
+                },
+                "urn:modelYear" => input_string[0],
+                "urn:makeName" => input_string[1],
                 "urn:modelName" => input_string[2]
             }
         end
